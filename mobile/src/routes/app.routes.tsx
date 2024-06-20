@@ -10,6 +10,9 @@ import { Home } from '@screens/Home';
 import { Exercise } from '@screens/Exercise';
 import { History } from '@screens/History';
 import { Profile } from '@screens/Profile';
+import { useAuth } from '@hooks/useAuth';
+import { useEffect } from 'react';
+import { tagUserInfoCreate } from '../notifications/notificationsTags';
 
 type AppRoutes = {
   home: undefined;
@@ -26,12 +29,20 @@ const { Navigator, Screen } = createBottomTabNavigator<AppRoutes>();
 
 export function AppRoutes() {
 
+  const { user } = useAuth()
+
+  const { email, name } = user
+
+  useEffect(() => {
+    tagUserInfoCreate(email, name)
+  }, [email, name])
+
   const { sizes, colors } = useTheme();
 
   const iconSize = sizes[6];
 
   return (
-    <Navigator screenOptions={{ 
+    <Navigator screenOptions={{
       headerShown: false,
       tabBarShowLabel: false,
       tabBarActiveTintColor: colors.green[500],
@@ -44,17 +55,17 @@ export function AppRoutes() {
         paddingTop: sizes[6]
       }
     }}>
-      <Screen 
+      <Screen
         name='home'
         component={Home}
         options={{
-          tabBarIcon: ({ color,  }) => (
+          tabBarIcon: ({ color, }) => (
             <HomeSvg fill={color} width={iconSize} height={iconSize} />
           )
         }}
       />
 
-      <Screen 
+      <Screen
         name='history'
         component={History}
         options={{
@@ -64,7 +75,7 @@ export function AppRoutes() {
         }}
       />
 
-      <Screen 
+      <Screen
         name='profile'
         component={Profile}
         options={{
@@ -74,7 +85,7 @@ export function AppRoutes() {
         }}
       />
 
-      <Screen 
+      <Screen
         name='exercise'
         component={Exercise}
         options={{ tabBarButton: () => null }}
