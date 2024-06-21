@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { FlatList, Heading, HStack, Text, useToast, VStack } from 'native-base';
 
@@ -16,7 +16,7 @@ import { Loading } from '@components/Loading';
 export function Home() {
   const [isLoading, setIsLoading] = useState(true);
 
-  const [groups, setGroups] = useState<string[]>([]);
+  const [groups, setGroups] = useState<string[]>(["antebraço", "bíceps", "costas", "ombro", "peito", "pernas", "trapézio", "tríceps"]);
   const [exercises, setExercises] = useState<ExerciseDTO[]>([]);
   const [groupSelected, setGroupSelected] = useState('antebraço');
 
@@ -27,30 +27,11 @@ export function Home() {
     navigation.navigate('exercise', { exerciseId });
   }
 
-  async function fetchGroups() {
-    try {
-      const response = await api.get('/groups');
-      setGroups(response.data);
-
-    } catch (error) {
-      const isAppError = error instanceof AppError;
-      const title = isAppError ? error.message : 'Não foi possível carregar os grupos musculares';
-
-      toast.show({
-        title,
-        placement: 'top',
-        bgColor: 'red.500'
-      })
-    }
-  }
-
   async function fecthExercisesByGroup() {
     try {
       setIsLoading(true);
       const response = await api.get(`/exercises/bygroup/${groupSelected}`);
-
       setExercises(response.data);
-
     } catch (error) {
       const isAppError = error instanceof AppError;
       const title = isAppError ? error.message : 'Não foi possível carregar os exercícios';
@@ -59,48 +40,45 @@ export function Home() {
         title,
         placement: 'top',
         bgColor: 'red.500'
-      })
+      });
     } finally {
       setIsLoading(false);
     }
   }
 
-  useEffect(() => {
-    fetchGroups();
-  },[])
-
   useFocusEffect(
     useCallback(() => {
-      fecthExercisesByGroup()
-    },[groupSelected])
-  )
+      fecthExercisesByGroup();
+    }, [groupSelected])
+  );
 
   return (
     <VStack flex={1}>
       <HomeHeader />
 
-      <FlatList 
-        data={groups}
-        keyExtractor={item => item}
-        renderItem={({ item }) => (
-          <Group 
-            name={item}
-            isActive={groupSelected.toLocaleUpperCase() === item.toLocaleUpperCase()}
-            onPress={() => setGroupSelected(item)}
-          />
-        )}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        _contentContainerStyle={{
-          px: 8,
-        }}
-        my={10}
-        maxH={10}
-      />
+      <VStack>
+        <FlatList
+          data={groups}
+          keyExtractor={(item, index) => `${item}-${index}`}
+          renderItem={({ item }) => (
+            <Group
+              name={item}
+              isActive={groupSelected === item}
+              onPress={() => setGroupSelected(item)}
+            />
+          )}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          _contentContainerStyle={{
+            px: 8,
+          }}
+          my={10}
+          maxH={10}
+        />
+      </VStack>
 
-      {
-        isLoading ? <Loading /> :
-        <VStack px={8}>
+      {isLoading ? <Loading /> : (
+        <VStack px={8} flex={1}>
           <HStack justifyContent="space-between" mb={5}>
             <Heading color="gray.200" fontSize="md" fontFamily="heading">
               Exercícios
@@ -111,11 +89,11 @@ export function Home() {
             </Text>
           </HStack>
 
-          <FlatList 
+          <FlatList
             data={exercises}
             keyExtractor={item => item.id}
             renderItem={({ item }) => (
-              <ExerciseCard 
+              <ExerciseCard
                 onPress={() => handleOpenExerciseDetails(item.id)}
                 data={item}
               />
@@ -125,9 +103,8 @@ export function Home() {
               paddingBottom: 20
             }}
           />
-
         </VStack>
-      }
+      )}
     </VStack>
   );
 }

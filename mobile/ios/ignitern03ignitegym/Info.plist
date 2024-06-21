@@ -25,7 +25,14 @@
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
+          <string>ignitegymchallenge</string>
           <string>com.datagro.ignitegymchallenge</string>
+        </array>
+      </dict>
+      <dict>
+        <key>CFBundleURLSchemes</key>
+        <array>
+          <string>exp+ignitegymchallenge</string>
         </array>
       </dict>
     </array>
