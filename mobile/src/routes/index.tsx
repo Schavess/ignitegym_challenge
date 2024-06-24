@@ -63,6 +63,7 @@ export function Routes() {
     return <Loading />
   }
 
+
   useEffect(() => {
     const handleNotification = (event: NotificationWillDisplayEvent): void => {
       event.preventDefault();
