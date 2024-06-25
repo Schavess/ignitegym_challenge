@@ -10,7 +10,7 @@ const API_KEY = process.env.ONESIGNAL_REST_API_KEY;
     included_segments: ['All'],
     contents: {
       en: "Hello OneSignal!"
-    }
+    },
   };
 
   try {

@@ -65,19 +65,24 @@ class HistoryController {
 
     await knex("history").insert({ user_id, exercise_id });
 
+    const exercise = await knex("exercises").where({ id: exercise_id }).first();
+
     const notification = {
       app_id: APP_ID,
       included_segments: ['All'],
       contents: {
-        en: "oejejaserppaedrjgsadmfgmjadfç!"
-      }
+        en: `Parabéns por concluir seu exercício "${exercise.name}"` 
+      },
+      headings: {
+        en: "Parabéns!!!"
+    }
     };
 
     try {
       const res = await axios.post('https://onesignal.com/api/v1/notifications', notification, {
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Basic ${API_KEY}` // .env não funciona
+          'Authorization': `Basic ${API_KEY}`
         }
       });
       console.log('Notification sent successfully, ID:', res.data.id);
