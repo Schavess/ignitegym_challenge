@@ -65,8 +65,9 @@ export function Routes() {
 
   useEffect(() => {
     const handleNotification = (event: NotificationWillDisplayEvent): void => {
-      event.preventDefault();
+      // event.preventDefault();
       const response = event.getNotification();
+      console.log(response); // probleminha com o estado => Verificar
       setNotification(response);
     }
 
