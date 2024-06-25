@@ -2,7 +2,7 @@ require('dotenv').config();
 const axios = require('axios');
 
 const APP_ID = process.env.ONESIGNAL_APP_ID;
-// const API_KEY = process.env.ONESIGNAL_REST_API_KEY;
+const API_KEY = process.env.ONESIGNAL_REST_API_KEY;
 
 (async () => {
   const notification = {
@@ -17,7 +17,7 @@ const APP_ID = process.env.ONESIGNAL_APP_ID;
     const response = await axios.post('https://onesignal.com/api/v1/notifications', notification, {
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Basic 'NWY3ZThiOTctNmYwNC00N2U2LTk1NjYtMjk3MWU3YTIzMWUy'` // .env não funciona
+        'Authorization': `Basic ${API_KEY}` // .env não funciona
       }
     });
     console.log('Notification sent successfully, ID:', response.data.id);

@@ -1,8 +1,11 @@
 const AppError = require("../utils/AppError");
 const knex = require("../database");
 const dayjs = require("dayjs");
-const axios = require("axios");
+const axios = require('axios');
 require('dotenv').config();
+
+const APP_ID = process.env.ONESIGNAL_APP_ID;
+const API_KEY = process.env.ONESIGNAL_REST_API_KEY;
 
 class HistoryController {
   async index(request, response) {
@@ -32,12 +35,12 @@ class HistoryController {
 
     const exercisesByDay = days.map(day => {
       const exercises = history
-        .filter((exercise) => dayjs(exercise.created_at).format('DD.MM.YYYY') === day).
-        map((exercise) => {
+        .filter((exercise) => dayjs(exercise.created_at).format('DD.MM.YYYY') === day)
+        .map((exercise) => {
           return {
             ...exercise,
             hour: dayjs(exercise.created_at).format('HH:mm')
-          }
+          };
         });
 
       return ({ title: day, data: exercises });
@@ -62,24 +65,22 @@ class HistoryController {
 
     await knex("history").insert({ user_id, exercise_id });
 
-    // Enviar notificação
     const notification = {
-      app_id: process.env.ONESIGNAL_APP_ID,
+      app_id: APP_ID,
       included_segments: ['All'],
       contents: {
-        'en': 'Parabéns por completar o exercício!'
-      },
-      include_email_tokens: [user.email] // Usar o email do usuário como identificador
+        en: "oejejaserppaedrjgsadmfgmjadfç!"
+      }
     };
 
     try {
-      const response = await axios.post('https://onesignal.com/api/v1/notifications', notification, {
+      const res = await axios.post('https://onesignal.com/api/v1/notifications', notification, {
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Basic 'NWY3ZThiOTctNmYwNC00N2U2LTk1NjYtMjk3MWU3YTIzMWUy'`
+          'Authorization': `Basic ${API_KEY}` // .env não funciona
         }
       });
-      console.log('Notification sent successfully, ID:', response.data.id);
+      console.log('Notification sent successfully, ID:', res.data.id);
     } catch (error) {
       console.error('Error sending notification:', error.response ? error.response.data : error);
       throw new AppError("Erro ao enviar notificação.");

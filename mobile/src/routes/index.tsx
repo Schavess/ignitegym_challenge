@@ -63,22 +63,21 @@ export function Routes() {
     return <Loading />
   }
 
+  // useEffect(() => {
+  //   const handleNotification = (event: NotificationWillDisplayEvent): void => {
+  //     // event.preventDefault();
+  //     const response = event.getNotification();
+  //     setNotification(response);
+  //   }
 
-  useEffect(() => {
-    const handleNotification = (event: NotificationWillDisplayEvent): void => {
-      event.preventDefault();
-      const response = event.getNotification();
-      setNotification(response);
-    }
+  //   OneSignal.Notifications.addEventListener("foregroundWillDisplay", handleNotification);
 
-    OneSignal.Notifications.addEventListener("foregroundWillDisplay", handleNotification);
+  //   return () => OneSignal.Notifications.removeEventListener("foregroundWillDisplay", handleNotification);
+  // }, []);
 
-    return () => OneSignal.Notifications.removeEventListener("foregroundWillDisplay", handleNotification);
-  }, []);
-
-  function handleNotificationClose() {
-    setNotification(undefined);
-  }
+  // function handleNotificationClose() {
+  //   setNotification(undefined);
+  // }
 
   return (
     <Box flex={1} bg="gray.700">
@@ -86,11 +85,11 @@ export function Routes() {
         {user.id ?
           <>
             <AppRoutes />
-            {notification?.title &&
+            {/* {notification?.title &&
               (
                 <Notification data={notification} onClose={handleNotificationClose} />
               )
-            }
+            } */}
           </>
           :
           <AuthRoutes />}
